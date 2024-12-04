@@ -1,0 +1,26 @@
+{% extends 'base_generic.html' %}
+
+{% block title %}Home - SwiftNote{% endblock %}
+
+{% block content %}
+<div class="container-fluid text-center">
+    <h1 class="text-primary">Welcome to SwiftNote, {{ user.username }}!</h1>
+    <p>Manage your notes and tasks all in one place.</p>
+
+    <div class="row">
+        <!-- Notes Section -->
+        <div class="col-md-6 mb-3">
+            <h3 class="text-primary shadow-sm p-2 rounded">Notes</h3>
+            <a href="{% url 'create_note' %}" class="btn btn-primary w-100 shadow-sm">Create a New Note</a>
+            <a href="{% url 'view_notes' %}" class="btn btn-secondary w-100 mt-2 shadow-sm">View All Notes</a>
+        </div>
+
+        <!-- Tasks Section -->
+        <div class="col-md-6 mb-3">
+            <h3 class="text-primary shadow-sm p-2 rounded">Tasks</h3>
+            <a href="{% url 'create_task' %}" class="btn btn-success w-100 shadow-sm">Create a New Task</a>
+            <a href="{% url 'view_tasks' %}" class="btn btn-info w-100 mt-2 shadow-sm">View All Tasks</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

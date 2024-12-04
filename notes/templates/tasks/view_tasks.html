@@ -1,0 +1,114 @@
+{% extends 'base_generic.html' %}
+
+{% block title %}View Tasks - SwiftNote{% endblock %}
+
+{% load custom_filters %}
+
+{% block content %}
+<div class="container py-4 bg-light shadow-sm rounded">
+    <h1 class="mb-4 text-center text-primary shadow-sm p-2 rounded">Your Tasks</h1>
+
+    <!-- Pagination for tasks -->
+    {% if page_obj.has_other_pages %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mb-4">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">&laquo; First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                    <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                </li>
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+
+    <!-- Search form for filtering tasks -->
+    <div class="search-form-container mb-4">
+        <form method="get" class="row g-3 bg-light p-4 rounded shadow-lg" style="max-width: 600px; margin: 0 auto;">
+            <label for="search" class="form-label">Search Tasks</label>
+            <div class="d-flex">
+                <input type="text" id="search" name="search" value="{{ search_query }}" class="form-control" placeholder="Search tasks...">
+                <button id="searchButton" type="submit" class="btn btn-primary ml-2">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Alert for no search results, show only on search results page -->
+    {% if search_query and not page_obj %}
+        <div class="alert alert-danger text-center" role="alert">
+            No tasks found matching '{{ search_query }}'!
+            <br>
+            <a href="{% url 'view_tasks' %}" class="btn btn-primary">View All Tasks</a>
+        </div>
+    {% endif %}
+
+    <!-- Display tasks -->
+    {% if page_obj %}
+        <div class="d-flex flex-wrap justify-content-center">
+            {% for task in page_obj %}
+                <div class="task-item custom-card p-3 border rounded shadow-sm bg-light mb-4 mx-2" style="width: 300px;">
+                    <h5 class="text-primary">
+                        {% with task.title|highlight:search_query as highlighted_title %}
+                            {% if highlighted_title %}
+                                <span class="font-weight-bold">{{ highlighted_title|safe }}</span>
+                            {% else %}
+                                {{ task.title }}
+                            {% endif %}
+                        {% endwith %}
+                    </h5>
+                    <p>
+                        {% with task.description|truncatechars:100|highlight:search_query as highlighted_description %}
+                            {% if highlighted_description %}
+                                <span class="font-weight-bold">{{ highlighted_description|safe }}</span>
+                            {% else %}
+                                {{ task.description|truncatechars:100 }}
+                            {% endif %}
+                        {% endwith %}
+                    </p>
+                    <p>
+                        <strong>Status:</strong>
+                        <span class="badge
+                            {% if task.status == 'Pending' %}bg-warning
+                            {% elif task.status == 'In Progress' %}bg-primary
+                            {% else %}bg-success
+                            {% endif %}">
+                            {{ task.status }}
+                        </span>
+                    </p>
+                    <p><strong>Priority:</strong> {{ task.priority }}</p>
+                    {% if task.due_date %}
+                        <p><strong>Due Date:</strong> {{ task.due_date|date:"M d, Y H:i" }}</p>
+                    {% endif %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'update_task' task.id %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'delete_task' task.id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </div>
+                    <a href="{% url 'task_detail' task.id %}" class="btn btn-link">View Details</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% if not search_query %}
+            <div class="text-center">
+                <p>No tasks found. Start by creating one!</p>
+                <a href="{% url 'create_task' %}" class="btn btn-success">Create a New Task</a>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

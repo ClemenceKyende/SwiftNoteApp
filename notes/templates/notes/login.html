@@ -1,0 +1,45 @@
+{% extends 'base_generic.html' %}
+
+{% block title %}Login - SwiftNote{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="form-container p-4 shadow-lg rounded bg-light">
+        <h1 class="text-center text-primary shadow-sm p-2 rounded mb-4">Login</h1>
+
+        <form method="post" class="row g-3">
+            {% csrf_token %}
+
+            <div class="col-12">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" id="username" name="username" required class="form-control" placeholder="Enter your username">
+                {% if form.username.errors %}
+                    <div class="text-danger">
+                        {% for error in form.username.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-12">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" id="password" name="password" required class="form-control" placeholder="Enter your password">
+                {% if form.password.errors %}
+                    <div class="text-danger">
+                        {% for error in form.password.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </div>
+        </form>
+
+        <p class="mt-3 text-center">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+    </div>
+</div>
+{% endblock %}

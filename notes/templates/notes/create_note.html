@@ -1,0 +1,28 @@
+{% extends 'base_generic.html' %}
+
+{% block title %}Create Note - SwiftNote{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4 text-center text-primary shadow-sm p-2 rounded">Create a New Note</h1>
+
+    <!-- Note creation form -->
+    <form method="post" class="row g-3 bg-light p-4 rounded shadow-lg">
+        {% csrf_token %}
+
+        <div class="col-12">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" id="title" name="title" required class="form-control shadow-sm" placeholder="Enter note title">
+        </div>
+
+        <div class="col-12">
+            <label for="content" class="form-label">Content</label>
+            <textarea id="content" name="content" required class="form-control shadow-sm" rows="5" placeholder="Write your note here..."></textarea>
+        </div>
+
+        <div class="col-12 text-center">
+            <button type="submit" class="btn btn-primary w-50 shadow-sm">Save Note</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4 text-center text-primary shadow-sm p-2 rounded">Create a New Task</h1>
+
+    <!-- Task creation form -->
+    <form method="POST" class="row g-3 bg-light p-4 rounded shadow-lg">
+        {% csrf_token %}
+
+        <!-- Task Title -->
+        <div class="col-12">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" name="title" class="form-control shadow-sm" id="title" placeholder="Enter the task title" required>
+        </div>
+
+        <!-- Task Description -->
+        <div class="col-12">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" class="form-control shadow-sm" id="description" rows="5" placeholder="Provide a description for the task" required></textarea>
+        </div>
+
+        <!-- Task Priority -->
+        <div class="col-12">
+            <label for="priority" class="form-label">Priority</label>
+            <select name="priority" class="form-select shadow-sm" id="priority">
+                <option value="" disabled selected>Select priority</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+
+        <!-- Due Date -->
+        <div class="col-12">
+            <label for="due_date" class="form-label">Due Date</label>
+            <input type="datetime-local" name="due_date" class="form-control shadow-sm" id="due_date">
+        </div>
+
+        <!-- Task Status -->
+        <div class="col-12">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" class="form-select shadow-sm" id="status">
+                <option value="" selected disabled class="text-muted">Select status</option>
+                <option value="Pending" {% if task.status == "Pending" %}selected{% endif %}>Pending</option>
+                <option value="In Progress" {% if task.status == "In Progress" %}selected{% endif %}>In Progress</option>
+                <option value="Completed" {% if task.status == "Completed" %}selected{% endif %}>Completed</option>
+            </select>
+        </div>
+
+        <!-- Linked Notes (Dropdown) -->
+        <div class="col-12">
+            <label for="linked_notes" class="form-label">Linked Notes</label>
+            <select name="linked_notes" class="form-select shadow-sm" id="linked_notes">
+                <option value="" disabled selected>Select a note</option>
+                {% for note in form.linked_notes.field.queryset %}
+                    <option value="{{ note.id }}">{{ note.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="col-12 text-center">
+            <button type="submit" class="btn btn-primary w-50 shadow-sm">Save Task</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
