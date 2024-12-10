@@ -12,7 +12,7 @@ class TaskForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        fields = ['title', 'description', 'status', 'priority', 'due_date', 'linked_notes']
+        fields = ['title', 'description', 'status', 'priority', 'due_date','reminder_time', 'linked_notes']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)  # Get the user from the view
@@ -23,7 +23,6 @@ class TaskForm(forms.ModelForm):
 
     def clean_title(self):
         title = self.cleaned_data.get('title')
-        # Check if a task with the same title already exists
-        if Task.objects.filter(title=title).exists():
+        if Task.objects.filter(title=title).exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError('A task with this title already exists.')
         return title

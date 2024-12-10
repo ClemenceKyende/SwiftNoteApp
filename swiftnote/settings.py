@@ -16,6 +16,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'notes',
     'tasks',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -29,6 +30,30 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'swiftnote.urls'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider's host
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'mwendeclemence@gmail.com'  # Your email address
+EMAIL_HOST_PASSWORD = 'clemencemwende98'  # Your email password
+
+# Celery configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # This is the default Redis URL
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+# Optional: Configure periodic tasks using Celery Beat
+CELERY_BEAT_SCHEDULE = {
+    'send-task-reminders': {
+        'task': 'tasks.send_task_reminder',
+        'schedule': 60.0,  # Every minute (for example)
+    },
+}
+
+
 
 # Login URL and Redirect
 LOGIN_REDIRECT_URL = '/'

@@ -1,5 +1,7 @@
 {% extends 'base_generic.html' %}
 
+{% block title %}Update Task{% endblock %}
+
 {% block content %}
 <div class="container py-4">
     <h1 class="text-center text-primary shadow-sm p-2 rounded mb-4">Update Task</h1>
@@ -37,6 +39,12 @@
             <input type="datetime-local" name="due_date" class="form-control shadow-sm" id="due_date" value="{{ task.due_date|date:'Y-m-d\\TH:i' }}">
         </div>
 
+         <!-- Reminder Time -->
+        <div class="col-12">
+            <label for="reminder_time" class="form-label">Reminder Time</label>
+            <input type="datetime-local" name="reminder_time" class="form-control shadow-sm" id="reminder_time" value="{{ task.reminder_time|date:'Y-m-d\\TH:i' }}">
+        </div>
+
         <!-- Task Status -->
         <div class="col-12">
             <label for="status" class="form-label">Status</label>
@@ -60,7 +68,7 @@
         </div>
 
         <div class="col-12 text-center">
-            <button type="submit" class="btn btn-primary w-50 shadow-sm">Save Changes</button>
+            <button type="submit" class="btn btn-primary w-50 shadow-sm">Update</button>
         </div>
     </form>
 </div>

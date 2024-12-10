@@ -61,7 +61,7 @@
     {% if page_obj %}
         <div class="d-flex flex-wrap justify-content-center">
             {% for task in page_obj %}
-                <div class="task-item custom-card p-3 border rounded shadow-sm bg-light mb-4 mx-2" style="width: 300px;">
+                <div class="task-item custom-card p-3 border rounded shadow-sm bg-light mb-4 mx-2" style="width: 300px; margin: 10px;">
                     <h5 class="text-primary">
                         {% with task.title|highlight:search_query as highlighted_title %}
                             {% if highlighted_title %}
@@ -94,11 +94,21 @@
                     {% if task.due_date %}
                         <p><strong>Due Date:</strong> {{ task.due_date|date:"M d, Y H:i" }}</p>
                     {% endif %}
+
+                    <!-- Reminder Section -->
+                    {% if task.reminder_time %}
+                        <p><strong>Reminder:</strong> Set for {{ task.reminder_time|date:"M d, Y H:i" }}</p>
+                    {% else %}
+                        <p><strong>Reminder:</strong> Not set</p>
+                    {% endif %}
+
                     <div class="d-flex justify-content-between">
-                        <a href="{% url 'update_task' task.id %}" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="{% url 'delete_task' task.id %}" class="btn btn-danger btn-sm">Delete</a>
+                        <div class="mt-4">
+                            <a href="{% url 'update_task' task.id %}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="{% url 'delete_task' task.id %}" class="btn btn-danger btn-sm">Delete</a>
+                        </div>
+                        <a href="{% url 'task_detail' task.id %}" class="btn btn-link">View Details</a>
                     </div>
-                    <a href="{% url 'task_detail' task.id %}" class="btn btn-link">View Details</a>
                 </div>
             {% endfor %}
         </div>

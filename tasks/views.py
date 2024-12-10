@@ -10,6 +10,11 @@ from django.utils.html import format_html
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.utils.text import slugify
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView
+from .models import Notification
+from django.utils import timezone
+from datetime import datetime
 
 
 @login_required
@@ -50,28 +55,25 @@ def update_task_view(request, task_id):
         raise Http404("Task not found")
 
     if request.method == "POST":
-        form = TaskForm(request.POST, user=request.user, instance=task)  # Pass the logged-in user to the form
+        form = TaskForm(request.POST, user=request.user, instance=task)
         if form.is_valid():
             task = form.save(commit=False)
-            task.user = request.user  # Ensure the task is assigned to the logged-in user
-            task.save()  # Save the task to the database
+            task.user = request.user
+            task.save()
 
             # Handle the many-to-many relationship with notes
             linked_notes = form.cleaned_data['linked_notes']
-            task.linked_notes.set(linked_notes)  # Assign selected notes to the task
+            task.linked_notes.set(linked_notes)
 
-            # Success message with a link to view tasks
-            success_message = format_html(
-                'Task updated successfully!</a>',
-                reverse("view_tasks")
-            )
+            # Success message
+            success_message = "Task updated successfully!"
             messages.success(request, success_message)
-            return redirect('view_tasks')  # Redirect to the view tasks page after update
-
+            return redirect('view_tasks')
     else:
-        form = TaskForm(user=request.user, instance=task)  # Pass the logged-in user to the form
+        form = TaskForm(user=request.user, instance=task)
 
     return render(request, 'tasks/update_task.html', {'form': form, 'task': task})
+
 
 # View for deleting a task
 @login_required
@@ -113,4 +115,33 @@ def view_tasks_view(request):
 def task_detail_view(request, task_id):
     task = Task.objects.get(id=task_id, user=request.user)  # Fetch the task by ID and ensure it's owned by the logged-in user
     return render(request, "tasks/task_detail.html", {"task": task})
+
+
+@login_required
+def notifications(request):
+    notifications = Notification.objects.filter(user=request.user, is_read=False)
+    return render(request, 'notifications.html', {'notifications': notifications})
+
+class NotificationListView(ListView):
+    model = Notification
+    template_name = 'tasks/notifications.html'
+    context_object_name = 'notifications'
+
+    def dispatch(self, request, *args, **kwargs):
+        # Redirect to login page if the user is not authenticated
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('login'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        # Filter notifications for the logged-in user
+        return Notification.objects.filter(user=self.request.user).order_by('-created_at')
+
+# Mark a notification as read
+def mark_as_read(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+    return redirect('notifications')  # Assuming 'notifications' is the URL name for the list of notifications
+
 

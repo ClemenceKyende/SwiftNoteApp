@@ -1,0 +1,50 @@
+{% extends 'base_generic.html' %}
+
+{% block title %}Notifications - SwiftNote{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4 text-center text-primary shadow-sm p-2 rounded">Your Notifications</h1>
+    <p class="text-center">Stay updated with the latest reminders and alerts.</p>
+</div>
+
+<div class="row">
+    {% if notifications %}
+        {% for notification in notifications %}
+            <div class="col-md-6 offset-md-3 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body {% if notification.is_read %} bg-light {% else %} bg-primary text-white {% endif %}">
+                        <h5 class="card-title">Notification</h5>
+                        <p class="card-text">{{ notification.message }}</p>
+                        <p><small class="text-muted">{{ notification.created_at }}</small></p>
+
+                        <a href="{% url 'mark_as_read' notification.id %}"
+                           class="btn {% if notification.is_read %}btn-outline-secondary{% else %}btn-light{% endif %} w-100">
+                            {% if notification.is_read %} Marked as Read {% else %} Mark as Read {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-md-6 offset-md-3">
+            <div class="alert alert-info text-center shadow-sm" id="no-notifications-alert" role="alert">
+                <h4>No Notifications</h4>
+                <p>You have no notifications at the moment.</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    // Automatically hide the "No Notifications" alert after 5 seconds
+    const alert = document.getElementById('no-notifications-alert');
+    if (alert) {
+        setTimeout(() => {
+            alert.style.transition = "opacity 0.5s";
+            alert.style.opacity = 0;  // Fade out
+            setTimeout(() => alert.remove(), 500);  // Remove from DOM after fade-out
+        }, 5000); // 5-second delay
+    }
+</script>
+{% endblock %}

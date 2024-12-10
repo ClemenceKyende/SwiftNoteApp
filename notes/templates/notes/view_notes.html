@@ -61,30 +61,33 @@
     {% if page_obj %}
         <div class="d-flex flex-wrap justify-content-center">
             {% for note in page_obj %}
-                <div class="note-item custom-card p-3 border rounded shadow-sm bg-light mb-4 mx-2" style="width: 300px;">
-                    <h5 class="text-primary">
-                        {% with note.title|highlight:search_query as highlighted_title %}
-                            {% if highlighted_title %}
-                                <span class="font-weight-bold">{{ highlighted_title|safe }}</span>
-                            {% else %}
-                                {{ note.title }}
-                            {% endif %}
-                        {% endwith %}
-                    </h5>
-                    <p>
-                        {% with note.content|truncatechars:100|highlight:search_query as highlighted_content %}
-                            {% if highlighted_content %}
-                                <span class="font-weight-bold">{{ highlighted_content|safe }}</span>
-                            {% else %}
-                                {{ note.content|truncatechars:100 }}
-                            {% endif %}
-                        {% endwith %}
-                    </p>
-                    <div class="d-flex justify-content-between">
-                        <a href="{% url 'update_note' note.id %}" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="{% url 'delete_note' note.id %}" class="btn btn-danger btn-sm">Delete</a>
-                    </div>
-                    <a href="{% url 'note_detail' note.id %}" class="btn btn-link">View Details</a>
+                <div class="card custom-card mb-4 mx-2" style="width: 300px; display: inline-block;">
+                    <div class="card-body p-3 bg-light shadow-sm rounded">
+                        <h5 class="card-title text-primary">
+                            {% with note.title|highlight:search_query as highlighted_title %}
+                                {% if highlighted_title %}
+                                    <span class="font-weight-bold">{{ highlighted_title|safe }}</span>
+                                {% else %}
+                                    {{ note.title }}
+                                {% endif %}
+                            {% endwith %}
+                        </h5>
+                        <p class="card-text">
+                            {% with note.content|truncatechars:100|highlight:search_query as highlighted_content %}
+                                {% if highlighted_content %}
+                                    <span class="font-weight-bold">{{ highlighted_content|safe }}</span>
+                                {% else %}
+                                    {{ note.content|truncatechars:100 }}
+                                {% endif %}
+                            {% endwith %}
+                        </p>
+    <div class="d-flex justify-content-between">
+        <a href="{% url 'update_note' note.id %}" class="btn btn-warning btn-sm">Edit</a>
+        <a href="{% url 'delete_note' note.id %}" class="btn btn-danger btn-sm">Delete</a>
+        <a href="{% url 'note_detail' note.id %}" class="btn btn-link">View Details</a>
+    </div>
+</div>
+
                 </div>
             {% endfor %}
         </div>

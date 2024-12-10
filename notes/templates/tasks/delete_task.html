@@ -10,14 +10,11 @@
             <p class="card-text">{{ task.description }}</p>
             <p>Status: <span class="badge bg-info">{{ task.status }}</span></p>
 
-            <form method="POST">
-                {% csrf_token %}
-                <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-danger w-25 shadow-sm">Delete</button>
-                    <a href="{% url 'view_tasks' %}" class="btn btn-secondary w-25 shadow-sm">Cancel</a>
-                </div>
-            </form>
-        </div>
-    </div>
+             <!-- Form for deletion -->
+    <form method="post" class="d-flex justify-content-center mt-4">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-25 mx-2 shadow-sm">Delete</button>
+        <a href="{% url 'view_tasks' %}" class="btn btn-secondary w-25 mx-2 shadow-sm">Cancel</a>
+    </form>
 </div>
 {% endblock %}

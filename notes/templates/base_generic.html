@@ -41,12 +41,23 @@
                                 <a href="{% url 'register' %}" class="nav-link text-primary fs-4 font-weight-bold">Register</a>
                             </li>
                         {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
 
+                      <!-- Notification Icon -->
+                    <li class="nav-item">
+                        <a href="{% url 'notifications' %}" class="nav-link text-primary fs-4 font-weight-bold">
+                            <i class="fas fa-bell me-1"></i>
+                            {% if messages %}
+                                <span class="badge bg-danger">{{ messages|length }}</span>
+                            {% endif %}
+
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+</header>
 
    <!-- Messages -->
     <div class="container mt-3">
