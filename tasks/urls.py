@@ -12,6 +12,6 @@ urlpatterns = [
     path('tasks/delete/<int:task_id>/', views.delete_task_view, name='delete_task'),
     path('task/<int:task_id>/', views.task_detail_view, name='task_detail'),
     path('notifications/', NotificationListView.as_view(), name='notifications'),
-    path('notifications/mark_as_read/<int:notification_id>/', mark_as_read, name='mark_as_read'),
+    path('notifications/mark_as_read/<int:notification_id>/', mark_as_read, name='mark_as_read'), path('trigger-reminder/', views.trigger_reminder, name='trigger_reminder'),
 ]
 

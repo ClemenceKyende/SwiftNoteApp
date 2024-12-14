@@ -15,6 +15,9 @@ from django.views.generic import ListView
 from .models import Notification
 from django.utils import timezone
 from datetime import datetime
+from .tasks import send_task_reminder
+
+
 
 
 @login_required
@@ -145,3 +148,16 @@ def mark_as_read(request, notification_id):
     return redirect('notifications')  # Assuming 'notifications' is the URL name for the list of notifications
 
 
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+
+
+def trigger_reminder(request):
+    # Trigger the Celery task asynchronously
+    send_task_reminder.delay()
+
+    # Optionally, add a success message or redirect
+    return HttpResponse("Reminder task is being processed in the background.")
+
+import sys
+print(sys.path)

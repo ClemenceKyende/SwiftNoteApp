@@ -41,14 +41,17 @@ EMAIL_HOST_PASSWORD = 'clemencemwende98'  # Your email password
 
 # Celery configuration
 CELERY_BROKER_URL = 'redis://localhost:6379/0'  # This is the default Redis URL
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['pickle']
+CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_TIMEZONE = 'Africa/Nairobi'  # Set to your local timezone
+CELERY_TASK_RESULT_EXPIRES = 3600
 
 # Optional: Configure periodic tasks using Celery Beat
 CELERY_BEAT_SCHEDULE = {
     'send-task-reminders': {
-        'task': 'tasks.send_task_reminder',
+        'task': 'tasks.tasks.send_task_reminder',
         'schedule': 60.0,  # Every minute (for example)
     },
 }
@@ -112,3 +115,26 @@ USE_I18N = True
 USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'celery': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

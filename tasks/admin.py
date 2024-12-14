@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Task
+from .models import Task, Notification  # Import Notification model
 
 class TaskAdmin(admin.ModelAdmin):
     list_display = ('title', 'user', 'due_date', 'status', 'created_at')  # Removed 'updated_at'
@@ -26,3 +27,6 @@ class TaskAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at',)
 
 admin.site.register(Task, TaskAdmin)
+
+# Register the Notification model
+admin.site.register(Notification)
