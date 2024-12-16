@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 # Load environment variables from .env file (for local development)
 load_dotenv()
@@ -100,19 +101,39 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'swiftnote.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'your_local_db_name'),  # Replace with your MySQL database name
-        'USER': os.getenv('DB_USER', 'your_local_db_user'),  # Replace with your MySQL username
-        'PASSWORD': os.getenv('DB_PASSWORD', 'your_local_db_password'),  # Replace with your MySQL password
-        'HOST': os.getenv('DB_HOST', 'localhost'),  # Use Render DB_HOST in production or localhost for local
-        'PORT': os.getenv('DB_PORT', '3306'),  # Default MySQL port
-        'OPTIONS': {
-            'charset': 'utf8mb4',  # Ensures proper character encoding
-        },
+import os
+from urllib.parse import urlparse
+
+# Get the DATABASE_URL environment variable for production (Render)
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+# Check if we're in local development (MySQL) or production (PostgreSQL)
+if DATABASE_URL:
+    # If DATABASE_URL exists, we're in production (Render, using PostgreSQL)
+    url = urlparse(DATABASE_URL)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',  # PostgreSQL for Render
+            'NAME': url.path[1:],  # Database name (after the first '/')
+            'USER': url.username,  # Username
+            'PASSWORD': url.password,  # Password
+            'HOST': url.hostname,  # Hostname (the address of the database)
+            'PORT': url.port,  # Port (5432 is default for PostgreSQL)
+        }
     }
-}
+else:
+    # If DATABASE_URL does not exist, use MySQL for local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': os.getenv('DB_PORT'),
+        }
+    }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
