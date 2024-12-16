@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-xxxxxx')  # Secure your secret key in environment variables
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'swiftnote.onrender.com']  # Add your Render app URL here
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'SwiftNoteApp.onrender.com']  # Add your Render app URL here
 
 INSTALLED_APPS = [
     'django.contrib.admin',
