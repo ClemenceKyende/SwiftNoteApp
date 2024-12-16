@@ -1,12 +1,15 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file (for local development)
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-xxxxxx'
-DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'ClemenceKyende.pythonanywhere.com']
-
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-xxxxxx')  # Secure your secret key in environment variables
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'swiftnote.onrender.com']  # Add your Render app URL here
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -32,22 +35,23 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'swiftnote.urls'
 
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email settings (for sending emails)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development, replace with actual backend in production
 EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider's host
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'mwendeclemence@gmail.com'  # Your email address
-EMAIL_HOST_PASSWORD = 'clemencemwende98'  # Your email password
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'mwendeclemence@gmail.com')  # Use environment variable
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'your-email-password')  # Use environment variable
 
 # Celery configuration
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # This is the default Redis URL
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')  # Use Redis URL for local dev or Render production
 CELERY_ACCEPT_CONTENT = ['pickle']
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_RESULT_SERIALIZER = 'pickle'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_TIMEZONE = 'Africa/Nairobi'  # Set to your local timezone
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')  # Use Redis URL for local dev or Render production
+CELERY_TIMEZONE = 'Africa/Nairobi'
 CELERY_TASK_RESULT_EXPIRES = 3600
+
 
 # Optional: Configure periodic tasks using Celery Beat
 CELERY_BEAT_SCHEDULE = {
@@ -57,8 +61,6 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
-
-
 # Login URL and Redirect
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
@@ -67,14 +69,8 @@ LOGIN_URL = '/login/'
 AUTH_USER_MODEL = 'notes.CustomUser'
 
 # Static Files Configuration
-STATIC_URL = '/static/'  # The URL to use when referring to static files
-
-# Include the static directory inside the 'notes' app for development
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'notes', 'static'),
-]
-
-# Define the directory where collectstatic will collect all static files for production
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'notes', 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Media files (uploads)
@@ -101,8 +97,15 @@ WSGI_APPLICATION = 'swiftnote.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'your_local_db_name'),  # Replace with your MySQL database name
+        'USER': os.getenv('DB_USER', 'your_local_db_user'),  # Replace with your MySQL username
+        'PASSWORD': os.getenv('DB_PASSWORD', 'your_local_db_password'),  # Replace with your MySQL password
+        'HOST': os.getenv('DB_HOST', 'localhost'),  # Use Render DB_HOST in production or localhost for local
+        'PORT': os.getenv('DB_PORT', '3306'),  # Default MySQL port
+        'OPTIONS': {
+            'charset': 'utf8mb4',  # Ensures proper character encoding
+        },
     }
 }
 
