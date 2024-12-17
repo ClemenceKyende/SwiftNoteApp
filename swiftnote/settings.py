@@ -111,6 +111,7 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
     # If DATABASE_URL exists, we're in production (Render, using PostgreSQL)
     url = urlparse(DATABASE_URL)
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',  # PostgreSQL for Render
