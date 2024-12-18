@@ -6,11 +6,22 @@ from urllib.parse import urlparse
 # Load environment variables from .env file (for local development)
 load_dotenv()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+# Get SECRET_KEY from environment variable. In development, you can have a fallback, but not in production.
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-xxxxxx')  # Secure your secret key in environment variables
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'swiftnoteapp.onrender.com']  # Add your Render app URL here
+if not SECRET_KEY:
+    if DEBUG:  # Fallback for local development
+        SECRET_KEY = 'django-insecure-xxxxxx'  # Temporary fallback key for local development
+    else:
+        raise ValueError("No SECRET_KEY set in the environment variables. Please set it for production.")
+
+# Get DEBUG from environment variables. It defaults to False if not set.
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
+# Load environment variables from .env file (for local development)
+load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 CSRF_TRUSTED_ORIGINS = [
     'https://swiftnoteapp.onrender.com',
@@ -38,6 +49,19 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# WhiteNoise storage for compressed static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Media files (optional)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 ROOT_URLCONF = 'swiftnote.urls'
 
@@ -101,37 +125,46 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'swiftnote.wsgi.application'
 
-import os
-from urllib.parse import urlparse
 
-# Get the DATABASE_URL environment variable for production (Render)
+
+# Load ALLOWED_HOSTS from environment variable and convert it into a list
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,swiftnoteapp.onrender.com')
+
+# Convert the comma-separated string to a list
+ALLOWED_HOSTS = ALLOWED_HOSTS.split(',')
+
+# Load CSRF_TRUSTED_ORIGINS from environment variable and convert it into a list
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://swiftnoteapp.onrender.com,https://localhost:8000')
+
+# Convert the comma-separated string to a list
+CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS.split(',')
+
+# Database configuration
 DATABASE_URL = os.getenv('DATABASE_URL')
 
-# Check if we're in local development (MySQL) or production (PostgreSQL)
 if DATABASE_URL:
-    # If DATABASE_URL exists, we're in production (Render, using PostgreSQL)
+    # Use PostgreSQL for production
     url = urlparse(DATABASE_URL)
-
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',  # PostgreSQL for Render
-            'NAME': url.path[1:],  # Database name (after the first '/')
-            'USER': url.username,  # Username
-            'PASSWORD': url.password,  # Password
-            'HOST': url.hostname,  # Hostname (the address of the database)
-            'PORT': url.port,  # Port (5432 is default for PostgreSQL)
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': url.path[1:],
+            'USER': url.username,
+            'PASSWORD': url.password,
+            'HOST': url.hostname,
+            'PORT': url.port,
         }
     }
 else:
-    # If DATABASE_URL does not exist, use MySQL for local development
+    # Use MySQL for local development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('DB_NAME'),
-            'USER': os.getenv('DB_USER'),
-            'PASSWORD': os.getenv('DB_PASSWORD'),
-            'HOST': os.getenv('DB_HOST'),
-            'PORT': os.getenv('DB_PORT'),
+            'NAME': os.getenv('DB_NAME', 'default_db_name'),
+            'USER': os.getenv('DB_USER', 'default_db_user'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'default_db_password'),
+            'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+            'PORT': os.getenv('DB_PORT', '3306'),
         }
     }
 
