@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+load_dotenv()
+from urllib.parse import urlparse
+import dj_database_url
 
 # Load environment variables from .env file (for local development)
 load_dotenv()
@@ -81,17 +84,12 @@ LOGIN_URL = '/login/'
 
 AUTH_USER_MODEL = 'notes.CustomUser'
 
-# Database settings for MySQL
+
+# Configure the database using the DATABASE_URL from environment variables
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'swiftnote_db'),  # Ensure correct DB name in .env
-        'USER': os.getenv('DB_USER', 'ClemenceKyende'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'cLEmence2@#$'),
-        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
-        'PORT': os.getenv('DB_PORT', '3306'),
-    }
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
+
 
 # Allowed Hosts from environment variables
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
