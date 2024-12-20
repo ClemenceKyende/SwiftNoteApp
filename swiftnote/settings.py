@@ -10,9 +10,6 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Default to False
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-if not SECRET_KEY:
-    raise ValueError("No SECRET_KEY set in the environment variables. Please set it for production.")
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 INSTALLED_APPS = [
