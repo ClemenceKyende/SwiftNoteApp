@@ -4,21 +4,14 @@ from dotenv import load_dotenv
 load_dotenv()
 from urllib.parse import urlparse
 import dj_database_url
+
+# Load environment variables
 DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Default to False
-
-
-# Load environment variables from .env file (for local development)
-load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 if not SECRET_KEY:
-    if DEBUG:  # Fallback for local development
-        SECRET_KEY = 'django-insecure-xxxxxx'  # Temporary fallback key for local development
-    else:
-        raise ValueError("No SECRET_KEY set in the environment variables. Please set it for production.")
-
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+    raise ValueError("No SECRET_KEY set in the environment variables. Please set it for production.")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -82,12 +75,10 @@ LOGIN_URL = '/login/'
 
 AUTH_USER_MODEL = 'notes.CustomUser'
 
-
-# Configure the database using the DATABASE_URL from environment variables
+# Database configuration using the DATABASE_URL from environment variables
 DATABASES = {
     'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
-
 
 # Allowed Hosts from environment variables
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
