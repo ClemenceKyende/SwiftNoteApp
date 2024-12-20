@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 load_dotenv()
 from urllib.parse import urlparse
 import dj_database_url
+DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Default to False
+
 
 # Load environment variables from .env file (for local development)
 load_dotenv()
