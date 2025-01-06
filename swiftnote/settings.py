@@ -1,14 +1,20 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
-load_dotenv()
 from urllib.parse import urlparse
 import dj_database_url
+import environ
 
-# Load environment variables
-DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Default to False
+# Initialize environment variables
+env = environ.Env()
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+# Read the .env file
+environ.Env.read_env()  # This reads from the .env file in your project directory
+
+# Now you can use env() to access the values
+SECRET_KEY = env('SECRET_KEY')  # Loads the SECRET_KEY from the .env file
+
+# Use django-environ for loading the DEBUG variable as well
+DEBUG = env.bool('DEBUG', default=False)  # Default to False if DEBUG is not set
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
