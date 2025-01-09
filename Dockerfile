@@ -14,6 +14,9 @@ WORKDIR /app
 # Copy the requirements.txt file into the container
 COPY requirements.txt .
 
+# Set environment variable for unbuffered output
+ENV PYTHONUNBUFFERED=1
+
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
