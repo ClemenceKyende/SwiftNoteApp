@@ -27,11 +27,9 @@ COPY . .
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
-# Run database migrations
-RUN python manage.py migrate --noinput
-
 # Expose the port the app will run on
 EXPOSE 8000
 
 # Run the application
-CMD ["gunicorn", "swiftnote.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn swiftnote.wsgi:application --bind 0.0.0.0:8000"]
+
