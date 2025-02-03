@@ -1,12 +1,13 @@
 # Use the official Python image
 FROM python:3.11-slim
 
-# Install necessary system dependencies, including MariaDB client libraries
+# Install necessary system dependencies (PostgreSQL client is optional for some use cases)
 RUN apt-get update && apt-get install -y \
     pkg-config \
-    libmariadb-dev \
     build-essential \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
+
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -26,8 +27,11 @@ COPY . .
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
+# Run database migrations
+RUN python manage.py migrate --noinput
+
 # Expose the port the app will run on
 EXPOSE 8000
 
 # Run the application
-CMD [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
+CMD ["gunicorn", "swiftnote.wsgi:application", "--bind", "0.0.0.0:8000"]

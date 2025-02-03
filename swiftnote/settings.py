@@ -79,13 +79,12 @@ DATABASES = {
 }
 
 # Allowed Hosts from environment variables
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost' ).split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,https://swiftnoteapp.onrender.com').split(',')
 
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS' , '').split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://swiftnoteapp.onrender.com').split(',')
 CSRF_COOKIE_SECURE = not DEBUG  # Use secure cookies in production
 CSRF_COOKIE_HTTPONLY = True  # Prevents access to the CSRF cookie via JavaScript
 SESSION_COOKIE_SECURE = True  # For production, ensures session cookies are sent only over HTTPS
-
 
 TEMPLATES = [
     {
